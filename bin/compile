@@ -27,6 +27,7 @@
 # echo 'export PATH="$HOME/vendor/yt-dlp/bin:$PATH"' >> $PROFILE
 
 #!/bin/sh
+#!/bin/sh
 
 indent() {
   sed -u 's/^/       /'
@@ -34,19 +35,27 @@ indent() {
 
 echo "-----> Installing yt-dlp from master branch"
 cd "$1"
-mkdir -p "vendor/yt-dlp/bin/"
-cd "vendor/yt-dlp/bin/"
+mkdir -p vendor/yt-dlp/bin/
+cd vendor/yt-dlp/
 
-# Remove any old binary
-rm -f yt-dlp || true
+# Clone the repo or pull latest master if it already exists
+if [ -d yt-dlp ]; then
+  echo "Updating existing yt-dlp repo..." | indent
+  cd yt-dlp
+  git checkout master && git pull
+else
+  echo "Cloning yt-dlp master..." | indent
+  git clone https://github.com/yt-dlp/yt-dlp.git
+  cd yt-dlp
+  git checkout master
+fi
 
-# Download latest master version from GitHub
-wget -q https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp
-
-chmod a+rx yt-dlp
+echo "Linking yt-dlp to bin..." | indent
+cd ..
+ln -sf "$PWD/yt-dlp/yt_dlp/__main__.py" bin/yt-dlp
+chmod +x bin/yt-dlp
 
 echo "Adding to PATH" | indent
 PROFILE="$1/.profile.d/yt-dlp.sh"
 mkdir -p "$1/.profile.d/"
-touch "$PROFILE"
 echo 'export PATH="$HOME/vendor/yt-dlp/bin:$PATH"' >> "$PROFILE"
