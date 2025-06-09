@@ -1,61 +1,32 @@
-# #!/bin/sh
-
-# indent() {
-#   sed -u 's/^/       /'
-# }
-
-# echo "-----> Installing yt-dlp"
-# cd $1
-# mkdir -p "vendor/yt-dlp/bin/"
-# cd "vendor/yt-dlp/bin/"
-
-# # Optionally remove any existing version from a known location
-# rm -f /app/.heroku/python/bin/yt-dlp || true
-
-# wget $(curl -s https://api.github.com/repos/yt-dlp/yt-dlp/releases/tags/2025.05.22 \
-#   | grep -e "browser_download_url.*yt-dlp" \
-#   | cut -d : -f 2,3 \
-#   | tr -d \" \
-#   | grep -e "yt-dlp$")
-# chmod a+rx yt-dlp
-
-# echo "Adding to PATH" | indent
-# PROFILE="$1/.profile.d/yt-dlp.sh"
-# mkdir -p "$1/.profile.d/"
-# touch $PROFILE
-# # Prepend your directory so it has priority
-# echo 'export PATH="$HOME/vendor/yt-dlp/bin:$PATH"' >> $PROFILE
-
 #!/bin/sh
-#!/bin/sh
+
+# If doesn't work
+# python3 -m pip install -U pip hatchling wheel
+# python3 -m pip install --force-reinstall "yt-dlp[default] @ https://github.com/yt-dlp/yt-dlp/archive/master.tar.gz"
 
 indent() {
   sed -u 's/^/       /'
 }
 
-echo "-----> Installing yt-dlp from master branch"
-cd "$1"
-mkdir -p vendor/yt-dlp/bin/
-cd vendor/yt-dlp/
+echo "-----> Installing yt-dlp"
+cd $1
+mkdir -p "vendor/yt-dlp/bin/"
+cd "vendor/yt-dlp/bin/"
 
-# Clone the repo or pull latest master if it already exists
-if [ -d yt-dlp ]; then
-  echo "Updating existing yt-dlp repo..." | indent
-  cd yt-dlp
-  git checkout master && git pull
-else
-  echo "Cloning yt-dlp master..." | indent
-  git clone https://github.com/yt-dlp/yt-dlp.git
-  cd yt-dlp
-  git checkout master
-fi
+# Optionally remove any existing version from a known location
+rm -f /app/.heroku/python/bin/yt-dlp || true
 
-echo "Linking yt-dlp to bin..." | indent
-cd ..
-ln -sf "$PWD/yt-dlp/yt_dlp/__main__.py" bin/yt-dlp
-chmod +x bin/yt-dlp
+wget $(curl -s https://api.github.com/repos/yt-dlp/yt-dlp/releases/tags/2025.05.22 \
+  | grep -e "browser_download_url.*yt-dlp" \
+  | cut -d : -f 2,3 \
+  | tr -d \" \
+  | grep -e "yt-dlp$")
+chmod a+rx yt-dlp
 
 echo "Adding to PATH" | indent
 PROFILE="$1/.profile.d/yt-dlp.sh"
 mkdir -p "$1/.profile.d/"
-echo 'export PATH="$HOME/vendor/yt-dlp/bin:$PATH"' >> "$PROFILE"
+touch $PROFILE
+# Prepend your directory so it has priority
+echo 'export PATH="$HOME/vendor/yt-dlp/bin:$PATH"' >> $PROFILE
+
