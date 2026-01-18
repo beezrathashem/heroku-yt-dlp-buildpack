@@ -16,8 +16,8 @@ cd "vendor/yt-dlp/bin/"
 
 # Optionally remove any existing version from a known location
 rm -f /app/.heroku/python/bin/yt-dlp || true
-
-wget $(curl -s https://api.github.com/repos/yt-dlp/yt-dlp/releases/tags/2025.10.22 \
+#2025.10.22
+wget $(curl -s https://api.github.com/repos/yt-dlp/yt-dlp/releases/tags/2025.12.08 \
   | grep -e "browser_download_url.*yt-dlp" \
   | cut -d : -f 2,3 \
   | tr -d \" \
